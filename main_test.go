@@ -38,10 +38,10 @@ func TestBasicRedirections(t *testing.T) {
 		chvcl := make(chan bool)
 
 		n.Subscribe("config.get.connectors", func(msg *nats.Msg) {
-			n.Publish(msg.Reply, []byte(`{"executions":["fake","salt"],"firewalls":["fake","vcloud"],"instances":["fake","vcloud"],"nats":["fake","vcloud"],"networks":["fake","vcloud"],"routers":["fake","vcloud"]}`))
+			n.Publish(msg.Reply, []byte(`{"instances":["fake","vcloud","vcloud-fake","aws","aws-fake"]}`))
 		})
 
-		go main()
+		setup()
 
 		n.Subscribe("instance.create.fake", func(msg *nats.Msg) {
 			chfak <- true
@@ -54,18 +54,18 @@ func TestBasicRedirections(t *testing.T) {
 		})
 		Convey("When it receives an invalid fake message", func() {
 			n.Publish("instance.create", []byte(`{"service":"aaa"}`))
-			Convey("Then it should redirect it to a fake connector", func() {
-				So(wait(cherr), ShouldNotBeNil)
+			Convey("Then it should redirect it to instance error creation", func() {
+				So(wait(cherr), ShouldBeNil)
 			})
 		})
 		Convey("When it receives a valid fake message", func() {
-			n.Publish("instance.create", []byte(`{"service":"aaa","instance_type":"fake"}`))
+			n.Publish("instance.create", []byte(`{"service":"aaa","datacenter_type":"fake"}`))
 			Convey("Then it should redirect it to a fake connector", func() {
 				So(wait(chfak), ShouldBeNil)
 			})
 		})
 		Convey("When it receives a valid vcloud message", func() {
-			n.Publish("instance.create", []byte(`{"service":"aaa","instance_type":"vcloud"}`))
+			n.Publish("instance.create", []byte(`{"service":"aaa","datacenter_type":"vcloud"}`))
 			Convey("Then it should redirect it to a fake connector", func() {
 				So(wait(chvcl), ShouldBeNil)
 			})
