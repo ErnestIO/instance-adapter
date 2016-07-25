@@ -38,6 +38,7 @@ type builderEvent struct {
 	DatacenterAccessToken string   `json:"datacenter_token"`
 	DatacenterAccessKey   string   `json:"datacenter_secret"`
 	NetworkName           string   `json:"network_name"`
+	NetworkAWSID          string   `json:"network_aws_id"`
 	SecurityGroupAWSIDs   []string `json:"security_group_aws_ids"`
 	VCloudURL             string   `json:"vcloud_url"`
 	Status                string   `json:"status"`
@@ -104,9 +105,9 @@ func (t Translator) BuilderToConnector(j []byte) []byte {
 	json.Unmarshal(j, &input)
 
 	switch input.DatacenterType {
-	case "vcloud", "fake-vcloud", "fake":
+	case "vcloud", "vcloud-fake", "fake":
 		output = t.builderToVCloudConnector(input)
-	case "aws", "fake-aws":
+	case "aws", "aws-fake":
 		output = t.builderToAwsConnector(input)
 	}
 
@@ -146,7 +147,6 @@ func (t Translator) builderToVCloudConnector(input builderEvent) []byte {
 	output.Status = input.Status
 	output.ErrorCode = input.ErrorCode
 	output.ErrorMessage = input.ErrorMessage
-
 	body, _ := json.Marshal(output)
 
 	return body
@@ -162,7 +162,7 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.DatacenterAccessToken = input.DatacenterAccessToken
 	output.DatacenterAccessKey = input.DatacenterAccessKey
 	output.DatacenterVpcID = input.DatacenterName
-	output.NetworkAWSID = input.NetworkName
+	output.NetworkAWSID = input.NetworkAWSID
 	output.SecurityGroupAWSIDs = input.SecurityGroupAWSIDs
 	// TODO: Documentation says something about Private IPS, but can't find any specs about it
 	output.InstanceName = input.Name
@@ -185,9 +185,9 @@ func (t Translator) ConnectorToBuilder(j []byte) []byte {
 	dec.Decode(&input)
 
 	switch input["_type"] {
-	case "vcloud", "fake-vcloud", "fake":
+	case "vcloud", "vcloud-fake", "fake":
 		output = t.vcloudConnectorToBuilder(j)
-	case "aws", "fake-aws":
+	case "aws", "aws-fake":
 		output = t.awsConnectorToBuilder(j)
 	}
 
@@ -201,7 +201,7 @@ func (t Translator) vcloudConnectorToBuilder(j []byte) []byte {
 
 	output.Uuid = input.Uuid
 	output.BatchID = input.BatchID
-	output.Type = input.RouterType
+	output.Type = input.DatacenterType
 	output.Service = input.Service
 	output.Name = input.InstanceName
 	output.CPU = input.Resource.CPU
@@ -241,7 +241,6 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.DatacenterAccessToken = input.DatacenterAccessToken
 	output.DatacenterAccessKey = input.DatacenterAccessKey
 	output.DatacenterName = input.DatacenterVpcID
-	output.NetworkName = input.NetworkAWSID
 	output.SecurityGroupAWSIDs = input.SecurityGroupAWSIDs
 	// TODO: Documentation says something about Private IPS, but can't find any specs about it
 	output.Name = input.InstanceName
