@@ -39,6 +39,7 @@ type builderEvent struct {
 	DatacenterAccessKey   string   `json:"datacenter_secret"`
 	NetworkName           string   `json:"network_name"`
 	NetworkAWSID          string   `json:"network_aws_id"`
+	KeyPair               string   `json:"key_pair"`
 	SecurityGroupAWSIDs   []string `json:"security_group_aws_ids"`
 	VCloudURL             string   `json:"vcloud_url"`
 	Status                string   `json:"status"`
@@ -92,6 +93,8 @@ type awsEvent struct {
 	InstanceName          string   `json:"instance_name"`
 	InstanceImage         string   `json:"instance_image"`
 	InstanceType          string   `json:"instance_type"`
+	InstanceIP            string   `json:"instance_ip"`
+	InstanceKeyPair       string   `json:"instance_key_pair"`
 	Status                string   `json:"status"`
 	ErrorCode             string   `json:"error_code"`
 	ErrorMessage          string   `json:"error_message"`
@@ -168,6 +171,8 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.InstanceName = input.Name
 	output.InstanceImage = input.Image
 	output.InstanceType = input.Type
+	output.InstanceIP = input.IP
+	output.InstanceKeyPair = input.KeyPair
 	output.Status = input.Status
 	output.ErrorCode = input.ErrorCode
 	output.ErrorMessage = input.ErrorMessage
@@ -246,6 +251,7 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.Name = input.InstanceName
 	output.Image = input.InstanceImage
 	output.Type = input.InstanceType
+	output.IP = input.InstanceIP
 	output.Status = input.Status
 	output.ErrorCode = input.ErrorCode
 	output.ErrorMessage = input.ErrorMessage
