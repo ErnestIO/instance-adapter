@@ -26,6 +26,7 @@ type builderEvent struct {
 	Catalog               string   `json:"reference_catalog"`
 	Image                 string   `json:"reference_image"`
 	Disks                 []disk   `json:"disks"`
+	InstanceAWSID         string   `json:"instance_aws_id"`
 	RouterName            string   `json:"router_name"`
 	RouterType            string   `json:"router_type"`
 	RouterIP              string   `json:"router_ip"`
@@ -94,6 +95,7 @@ type awsEvent struct {
 	InstanceImage         string   `json:"instance_image"`
 	InstanceType          string   `json:"instance_type"`
 	InstanceIP            string   `json:"instance_ip"`
+	InstanceAWSID         string   `json:"instance_aws_id"`
 	InstanceKeyPair       string   `json:"instance_key_pair"`
 	Status                string   `json:"status"`
 	ErrorCode             string   `json:"error_code"`
@@ -167,12 +169,12 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.DatacenterVpcID = input.DatacenterName
 	output.NetworkAWSID = input.NetworkAWSID
 	output.SecurityGroupAWSIDs = input.SecurityGroupAWSIDs
-	// TODO: Documentation says something about Private IPS, but can't find any specs about it
 	output.InstanceName = input.Name
 	output.InstanceImage = input.Image
 	output.InstanceType = input.Type
 	output.InstanceIP = input.IP
 	output.InstanceKeyPair = input.KeyPair
+	output.InstanceAWSID = input.InstanceAWSID
 	output.Status = input.Status
 	output.ErrorCode = input.ErrorCode
 	output.ErrorMessage = input.ErrorMessage
@@ -247,13 +249,13 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.DatacenterAccessKey = input.DatacenterAccessKey
 	output.DatacenterName = input.DatacenterVpcID
 	output.SecurityGroupAWSIDs = input.SecurityGroupAWSIDs
-	// TODO: Documentation says something about Private IPS, but can't find any specs about it
 	output.Name = input.InstanceName
 	output.Image = input.InstanceImage
 	output.Type = input.InstanceType
 	output.IP = input.InstanceIP
 	output.Status = input.Status
 	output.ErrorCode = input.ErrorCode
+	output.InstanceAWSID = input.InstanceAWSID
 	output.ErrorMessage = input.ErrorMessage
 
 	body, _ := json.Marshal(output)
