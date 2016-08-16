@@ -97,9 +97,7 @@ type awsEvent struct {
 	InstanceIP            string   `json:"instance_ip"`
 	InstanceAWSID         string   `json:"instance_aws_id"`
 	InstanceKeyPair       string   `json:"instance_key_pair"`
-	Status                string   `json:"status"`
-	ErrorCode             string   `json:"error_code"`
-	ErrorMessage          string   `json:"error_message"`
+	ErrorMessage          string   `json:"error"`
 }
 
 type Translator struct{}
@@ -175,9 +173,6 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.InstanceIP = input.IP
 	output.InstanceKeyPair = input.KeyPair
 	output.InstanceAWSID = input.InstanceAWSID
-	output.Status = input.Status
-	output.ErrorCode = input.ErrorCode
-	output.ErrorMessage = input.ErrorMessage
 
 	body, _ := json.Marshal(output)
 
@@ -253,10 +248,13 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.Image = input.InstanceImage
 	output.Type = input.InstanceType
 	output.IP = input.InstanceIP
-	output.Status = input.Status
-	output.ErrorCode = input.ErrorCode
 	output.InstanceAWSID = input.InstanceAWSID
-	output.ErrorMessage = input.ErrorMessage
+
+	if input.ErrorMessage != "" {
+		output.Status = "errored"
+		output.ErrorCode = "0"
+		output.ErrorMessage = input.ErrorMessage
+	}
 
 	body, _ := json.Marshal(output)
 
