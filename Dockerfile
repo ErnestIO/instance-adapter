@@ -7,4 +7,4 @@ WORKDIR /go/src/github.com/ernestio/instance-adapter
 
 RUN make deps && go install
 
-ENTRYPOINT /go/bin/instance-adapter
+ENTRYPOINT ./entrypoint.sh
