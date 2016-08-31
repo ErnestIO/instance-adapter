@@ -23,9 +23,11 @@ type builderEvent struct {
 	CPU                   int      `json:"cpus"`
 	RAM                   int      `json:"ram"`
 	IP                    string   `json:"ip"`
+	PublicIP              string   `json:"public_ip"`
 	Catalog               string   `json:"reference_catalog"`
 	Image                 string   `json:"reference_image"`
 	Disks                 []disk   `json:"disks"`
+	AssignElasticIP       bool     `json:"assign_elastic_ip"`
 	InstanceAWSID         string   `json:"instance_aws_id"`
 	RouterName            string   `json:"router_name"`
 	RouterType            string   `json:"router_type"`
@@ -82,22 +84,24 @@ type vcloudEvent struct {
 }
 
 type awsEvent struct {
-	Uuid                  string   `json:"_uuid"`
-	BatchID               string   `json:"_batch_id"`
-	Type                  string   `json:"_type"`
-	DatacenterRegion      string   `json:"datacenter_region,omitempty"`
-	DatacenterAccessToken string   `json:"datacenter_access_token"`
-	DatacenterAccessKey   string   `json:"datacenter_access_key"`
-	DatacenterVpcID       string   `json:"datacenter_vpc_id,omitempty"`
-	NetworkAWSID          string   `json:"network_aws_id"`
-	SecurityGroupAWSIDs   []string `json:"security_group_aws_ids"`
-	InstanceName          string   `json:"instance_name"`
-	InstanceImage         string   `json:"instance_image"`
-	InstanceType          string   `json:"instance_type"`
-	InstanceIP            string   `json:"instance_ip"`
-	InstanceAWSID         string   `json:"instance_aws_id"`
-	InstanceKeyPair       string   `json:"instance_key_pair"`
-	ErrorMessage          string   `json:"error"`
+	Uuid                    string   `json:"_uuid"`
+	BatchID                 string   `json:"_batch_id"`
+	Type                    string   `json:"_type"`
+	DatacenterRegion        string   `json:"datacenter_region,omitempty"`
+	DatacenterAccessToken   string   `json:"datacenter_access_token"`
+	DatacenterAccessKey     string   `json:"datacenter_access_key"`
+	DatacenterVpcID         string   `json:"datacenter_vpc_id,omitempty"`
+	NetworkAWSID            string   `json:"network_aws_id"`
+	SecurityGroupAWSIDs     []string `json:"security_group_aws_ids"`
+	InstanceName            string   `json:"instance_name"`
+	InstanceImage           string   `json:"instance_image"`
+	InstanceType            string   `json:"instance_type"`
+	InstanceIP              string   `json:"instance_ip"`
+	InstanceElasticIP       string   `json:"instance_elastic_ip"`
+	InstanceAWSID           string   `json:"instance_aws_id"`
+	InstanceKeyPair         string   `json:"instance_key_pair"`
+	InstanceAssignElasticIP bool     `json:"instance_assign_elastic_ip"`
+	ErrorMessage            string   `json:"error"`
 }
 
 type Translator struct{}
@@ -172,6 +176,7 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.InstanceType = input.Type
 	output.InstanceIP = input.IP
 	output.InstanceKeyPair = input.KeyPair
+	output.InstanceAssignElasticIP = input.AssignElasticIP
 	output.InstanceAWSID = input.InstanceAWSID
 
 	body, _ := json.Marshal(output)
@@ -248,6 +253,8 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.Image = input.InstanceImage
 	output.Type = input.InstanceType
 	output.IP = input.InstanceIP
+	output.AssignElasticIP = input.InstanceAssignElasticIP
+	output.PublicIP = input.InstanceElasticIP
 	output.InstanceAWSID = input.InstanceAWSID
 
 	if input.ErrorMessage != "" {
