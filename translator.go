@@ -41,6 +41,7 @@ type builderEvent struct {
 	DatacenterAccessToken string   `json:"datacenter_token"`
 	DatacenterAccessKey   string   `json:"datacenter_secret"`
 	NetworkName           string   `json:"network_name"`
+	NetworkIsPublic       bool     `json:"network_is_public"`
 	NetworkAWSID          string   `json:"network_aws_id"`
 	KeyPair               string   `json:"key_pair"`
 	SecurityGroupAWSIDs   []string `json:"security_group_aws_ids"`
@@ -92,6 +93,7 @@ type awsEvent struct {
 	DatacenterAccessKey     string   `json:"datacenter_access_key"`
 	DatacenterVpcID         string   `json:"datacenter_vpc_id,omitempty"`
 	NetworkAWSID            string   `json:"network_aws_id"`
+	NetworkIsPublic         bool     `json:"network_is_public"`
 	SecurityGroupAWSIDs     []string `json:"security_group_aws_ids"`
 	InstanceName            string   `json:"instance_name"`
 	InstanceImage           string   `json:"instance_image"`
@@ -170,6 +172,7 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.DatacenterAccessKey = input.DatacenterAccessKey
 	output.DatacenterVpcID = input.DatacenterName
 	output.NetworkAWSID = input.NetworkAWSID
+	output.NetworkIsPublic = input.NetworkIsPublic
 	output.SecurityGroupAWSIDs = input.SecurityGroupAWSIDs
 	output.InstanceName = input.Name
 	output.InstanceImage = input.Image
@@ -249,6 +252,8 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.DatacenterAccessKey = input.DatacenterAccessKey
 	output.DatacenterName = input.DatacenterVpcID
 	output.SecurityGroupAWSIDs = input.SecurityGroupAWSIDs
+	output.NetworkAWSID = input.NetworkAWSID
+	output.NetworkIsPublic = input.NetworkIsPublic
 	output.Name = input.InstanceName
 	output.Image = input.InstanceImage
 	output.Type = input.InstanceType
