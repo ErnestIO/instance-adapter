@@ -4,8 +4,8 @@ instance Adapter gets input nats messages in order to create, update or delete i
 
 ## Build status
 
-* master:  [![CircleCI](https://circleci.com/gh/ErnestIO/instance-adapter/tree/master.svg?style=svg)](https://circleci.com/gh/ErnestIO/instance-adapter/tree/master)
-* develop: [![CircleCI](https://circleci.com/gh/ErnestIO/instance-adapter/tree/develop.svg?style=svg)](https://circleci.com/gh/ErnestIO/instance-adapter/tree/develop)
+* master:  [![CircleCI](https://circleci.com/gh/ernestio/instance-adapter/tree/master.svg?style=svg)](https://circleci.com/gh/ernestio/instance-adapter/tree/master)
+* develop: [![CircleCI](https://circleci.com/gh/ernestio/instance-adapter/tree/develop.svg?style=svg)](https://circleci.com/gh/ernestio/instance-adapter/tree/develop)
 
 ## Installation
 
