@@ -99,6 +99,7 @@ type awsEvent struct {
 	InstanceImage           string   `json:"instance_image"`
 	InstanceType            string   `json:"instance_type"`
 	InstanceIP              string   `json:"instance_ip"`
+	InstancePublicIP        string   `json:"instance_public_ip"`
 	InstanceElasticIP       string   `json:"instance_elastic_ip"`
 	InstanceAWSID           string   `json:"instance_aws_id"`
 	InstanceKeyPair         string   `json:"instance_key_pair"`
@@ -182,6 +183,12 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.InstanceAssignElasticIP = input.AssignElasticIP
 	output.InstanceAWSID = input.InstanceAWSID
 
+	if output.InstanceAssignElasticIP {
+		output.InstanceElasticIP = input.PublicIP
+	} else {
+		output.InstancePublicIP = input.PublicIP
+	}
+
 	body, _ := json.Marshal(output)
 
 	return body
@@ -259,8 +266,13 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.Type = input.InstanceType
 	output.IP = input.InstanceIP
 	output.AssignElasticIP = input.InstanceAssignElasticIP
-	output.PublicIP = input.InstanceElasticIP
 	output.InstanceAWSID = input.InstanceAWSID
+
+	if output.AssignElasticIP {
+		output.PublicIP = input.InstanceElasticIP
+	} else {
+		output.PublicIP = input.InstancePublicIP
+	}
 
 	if input.ErrorMessage != "" {
 		output.Status = "errored"
