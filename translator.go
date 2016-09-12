@@ -44,6 +44,7 @@ type builderEvent struct {
 	NetworkIsPublic       bool     `json:"network_is_public"`
 	NetworkAWSID          string   `json:"network_aws_id"`
 	KeyPair               string   `json:"key_pair"`
+	UserData              string   `json:"user_data"`
 	SecurityGroupAWSIDs   []string `json:"security_group_aws_ids"`
 	VCloudURL             string   `json:"vcloud_url"`
 	Status                string   `json:"status"`
@@ -103,6 +104,7 @@ type awsEvent struct {
 	InstanceElasticIP       string   `json:"instance_elastic_ip"`
 	InstanceAWSID           string   `json:"instance_aws_id"`
 	InstanceKeyPair         string   `json:"instance_key_pair"`
+	InstanceUserData        string   `json:"instance_user_data"`
 	InstanceAssignElasticIP bool     `json:"instance_assign_elastic_ip"`
 	ErrorMessage            string   `json:"error"`
 }
@@ -182,6 +184,7 @@ func (t Translator) builderToAwsConnector(input builderEvent) []byte {
 	output.InstanceKeyPair = input.KeyPair
 	output.InstanceAssignElasticIP = input.AssignElasticIP
 	output.InstanceAWSID = input.InstanceAWSID
+	output.InstanceUserData = input.UserData
 
 	if output.InstanceAssignElasticIP {
 		output.InstanceElasticIP = input.PublicIP
@@ -267,6 +270,7 @@ func (t Translator) awsConnectorToBuilder(j []byte) []byte {
 	output.IP = input.InstanceIP
 	output.AssignElasticIP = input.InstanceAssignElasticIP
 	output.InstanceAWSID = input.InstanceAWSID
+	output.UserData = input.InstanceUserData
 
 	if output.AssignElasticIP {
 		output.PublicIP = input.InstanceElasticIP
